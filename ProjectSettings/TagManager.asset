@@ -9,6 +9,10 @@ TagManager:
   - Snail
   - LandingPad
   - Coral
+  - StatDisplay
+  - UpButton
+  - DownButton
+  - Ground
   layers:
   - Default
   - TransparentFX

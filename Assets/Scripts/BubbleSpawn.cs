@@ -5,10 +5,10 @@ using UnityEngine;
 public class BubbleSpawn : MonoBehaviour
 {
     public GameObject bubble;
-    public float spawnInterval_Base, bubbleSpeed_Base, riseSpeed_Base;
-    public float spawnInterval, timer, bubbleSpeed, riseSpeed;
-    public Vector2 sizeRange;
-    public Transform a, b, c, landingZone, lZoneTransformPoint, bubbleParent;
+    public float spawnInterval_Base, bubbleSpiralSpeed_Base, riseSpeed_Base;
+    [HideInInspector]
+    public float spawnInterval, timer, bubbleSpiralSpeed, riseSpeed;
+    public Transform a, b, c, landingZone, lZoneTransformPoint;
     public int bubbleIndex;
 
     // Start is called before the first frame update
@@ -29,9 +29,10 @@ public class BubbleSpawn : MonoBehaviour
 
     void SpawnBubble()
     {
-        GameObject _b = Instantiate(bubble, transform.position + Vector3.down, Quaternion.identity);
+        Vector3 spawnPos = transform.position + (Vector3.down * 100f);
+        GameObject _b = Instantiate(bubble, spawnPos, Quaternion.identity);
         _b.GetComponent<BubbleFlight>().OnSpawn(this);
-        _b.transform.parent = bubbleParent;
+        _b.transform.parent = transform;
         bubbleIndex++;
         timer = 0;
     }
@@ -39,7 +40,7 @@ public class BubbleSpawn : MonoBehaviour
     public void ResetValues()
     {
         spawnInterval = spawnInterval_Base;
-        bubbleSpeed = bubbleSpeed_Base;
+        bubbleSpiralSpeed = bubbleSpiralSpeed_Base;
         riseSpeed = riseSpeed_Base;
     }
 }

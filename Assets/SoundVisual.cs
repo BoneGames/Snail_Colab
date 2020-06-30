@@ -1,34 +1,39 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
+
 
 public class SoundVisual : MonoBehaviour
 {
     public bool randomStartTime;
     public Color zoneCol;
-    public float radius;
     public AudioSource aS;
-    public Renderer rend;
+    Renderer rend;
+    public StatAdjustComponents volDisplayComponents;
+    //public UiAdjust volDisplay;
+
     public ColorGrading cG;
     public PostProcessProfile ppV;
     Collider col;
     Snail_Controller snail;
+    public bool snailInside;
+    UI_Manager ui;
+
+    public string id;
     // Start is called before the first frame update
     void Start()
     {
+        zoneCol = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), .4f);
+        id = transform.parent.name + "_" + transform.name;
+        ui = FindObjectOfType<UI_Manager>();
         snail = FindObjectOfType<Snail_Controller>();
         col = GetComponent<Collider>();
-        foreach (var item in ppV.settings)
-        {
-            cG = item as ColorGrading;
-            if (cG != null)
-            {
-                break;
-            }
-        }
+        cG = GetCG();
+
         aS = GetComponent<AudioSource>();
-        if(randomStartTime)
+        if (randomStartTime)
         {
             SetRandomStartTime();
         }
@@ -39,15 +44,47 @@ public class SoundVisual : MonoBehaviour
         SetCol(true);
     }
 
+    ColorGrading GetCG()
+    {
+        ColorGrading _cg;
+        foreach (var item in ppV.settings)
+        {
+            _cg = item as ColorGrading;
+            if (_cg != null)
+            {
+                return _cg;
+            }
+        }
+        return null;
+    }
+
+    public void InitVolDisplay(StatAdjustComponents _components)
+    {
+        volDisplayComponents = _components;
+        SetVolumeDisplay();
+    }
+
+    public void SetVolumeDisplay()
+    {
+        if (volDisplayComponents)
+        {
+            volDisplayComponents.value.text = aS.volume.ToString();
+        }
+        else
+        {
+            Debug.Log(this.name + " does not have its adjustment components initialised");
+        }
+    }
+
     void SetRandomStartTime()
     {
-        float startTime = Random.Range(0,aS.clip.length);
+        float startTime = Random.Range(0, aS.clip.length);
         aS.time = startTime;
     }
 
     void SetSize()
     {
-        radius = aS.maxDistance;
+        float radius = aS.maxDistance;
         transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
     }
 
@@ -81,7 +118,7 @@ public class SoundVisual : MonoBehaviour
 
     private void Update()
     {
-        if (!entered)
+        if (!snailInside)
             return;
 
         if (ColliderInside())
@@ -96,24 +133,22 @@ public class SoundVisual : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if(other.transform.tag == "Snail")
-        //{
-        //    cG.colorFilter.value = zoneCol;
-        //    cG.colorFilter.overrideState = true;
-        //    Debug.Log("ColorSet");
-        //}
-        entered = true;
+        if (other.tag == "Snail")
+        {
+            // Debug.Log(id + ", Soundscape UI added");
+            snailInside = true;
+            ui.AddNewSoundScape(this);
+        }
     }
-    bool entered;
+
     private void OnTriggerExit(Collider other)
     {
-        entered = false;
-        //if (cG.colorFilter.value == zoneCol)
-        //{
-        //    cG.colorFilter.overrideState = false;
-        //    cG.colorFilter.
-        //    Debug.Log("out of color filter");
-        //}
+        if (other.tag == "Snail")
+        {
+            // Debug.Log(id + ", Soundscape UI removed");
+            snailInside = false;
+            ui.RemoveActiveSS(this);
+        }
     }
 
     public void SetColorFilter(bool on)
