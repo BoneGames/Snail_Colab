@@ -64,7 +64,6 @@ public class Snail_Controller : MonoBehaviour
         // init positions
         ResetPos();
         SetCamPos(true);
-        SetMoveState(MoveState.Standard);
 
         // set move specs
         rotateSpeed = baseRotateSpeed;
@@ -236,6 +235,7 @@ public class Snail_Controller : MonoBehaviour
 
     void SetMoveState(MoveState newState)
     {
+        Debug.Log(newState);
         switch (newState)
         {
             case MoveState.Standard:
@@ -406,6 +406,7 @@ public class Snail_Controller : MonoBehaviour
         moveSpeed = baseMoveSpeed;
         transform.position = respawnPoint.position;
         transform.rotation = respawnPoint.rotation;
+        SetMoveState(MoveState.GravityJump);
     }
 
     List<Vector3> GetColliderCorners()

@@ -10,7 +10,8 @@ public class SoundVisual : MonoBehaviour
     public bool randomStartTime;
     public Color zoneCol;
     public AudioSource aS;
-    Renderer rend;
+    //Renderer rend;
+    Material _mat;
     public StatAdjustComponents volDisplayComponents;
     //public UiAdjust volDisplay;
 
@@ -38,7 +39,7 @@ public class SoundVisual : MonoBehaviour
             SetRandomStartTime();
         }
 
-        rend = GetComponent<Renderer>();
+        _mat = GetComponent<Renderer>().material;
 
         SetSize();
         SetCol(true);
@@ -92,11 +93,12 @@ public class SoundVisual : MonoBehaviour
     {
         if (on)
         {
-            rend.material.color = zoneCol;
+            _mat.SetColor("_BaseColor", zoneCol);
         }
         else
         {
-            rend.material.color = new Color(0, 0, 0, 0);
+            _mat.SetColor("_BaseColor", new Color(0, 0, 0, 0));
+            //rend.material.color = new Color(0, 0, 0, 0);
         }
     }
 
