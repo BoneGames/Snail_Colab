@@ -8,7 +8,6 @@ public class BubbleSpawn : MonoBehaviour
     public float spawnInterval_Base, bubbleSpiralSpeed_Base, riseSpeed_Base;
     [HideInInspector]
     public float spawnInterval, timer, bubbleSpiralSpeed, riseSpeed;
-    public Transform a, b, c, landingZone, lZoneTransformPoint;
     public int bubbleIndex;
 
     // Start is called before the first frame update

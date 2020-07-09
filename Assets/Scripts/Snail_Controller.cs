@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using NaughtyAttributes;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +12,11 @@ public class Snail_Controller : MonoBehaviour
         GravityJump,
         FloatDown
     }
+    public bool placePlantMode;
+
     // Snail Movement
     public MoveState moveState;
-    [HideInInspector]
+    //[HideInInspector]
     public float moveSpeed, rotateSpeed;
     public float baseRotateSpeed, baseMoveSpeed;
     public Transform respawnPoint;
@@ -23,12 +26,13 @@ public class Snail_Controller : MonoBehaviour
     // fly down
     public float floatJourneySpeed, adjustBubbleSpeed, adjustLandingPointSpeed;
     public Transform a, b, c;
-    public Transform landingZone, landingZoneTransformPoint;
+    public Transform landingZone;//, landingZoneTransformPoint;
     public Vector3 extents;
-
+    public TrailRenderer lRend1, lRend2;
     // Cam View
     [HideInInspector]
-    public Transform firstPersonView, thirdPersonView, camTrans;
+    public Transform firstPersonView, thirdPersonViewPlay, thirdPersonViewEdit, camTrans, bodyBase;
+
     public float camSwitchSpeed, jumpForce;
     // state tracker (1st or third person)
     public bool thirdPersonState;
@@ -49,8 +53,6 @@ public class Snail_Controller : MonoBehaviour
     public KeyCode camSwitchKey, strafeKey1, strafeKey2, jump;
     bool Strafe => Input.GetKey(strafeKey2) || Input.GetKey(strafeKey1);
 
-
-
     private void Awake()
     {
         // get components
@@ -58,9 +60,24 @@ public class Snail_Controller : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         camTrans = Camera.main.transform;
     }
+    public Transform lRendEnd1, lRendEnd2;
+    [Button]
+    void LineRend()
+    {
+        lRend1.SetPositions(new Vector3[] { lRend1.transform.position, lRendEnd1.position });
+        lRend2.SetPositions(new Vector3[] { lRend2.transform.position, lRendEnd2.position });
+        
+    }
 
     void Start()
     {
+
+#if !UNITY_EDITOR
+        baseRotateSpeed = 20f;
+        moveSpeed = 0.4f;
+        placePlantMode = false;
+#endif
+
         // init positions
         ResetPos();
         SetCamPos(true);
@@ -86,6 +103,8 @@ public class Snail_Controller : MonoBehaviour
     }
 
     public float posTradeOff;
+
+    public float noiseScale, noiseDeltaRate;
     IEnumerator FloatDown()
     {
         SetMoveState(MoveState.FloatDown);
@@ -93,8 +112,19 @@ public class Snail_Controller : MonoBehaviour
         // set first waypoint to current position
         a.position = transform.position;
         float timer = 0f;
+
+        float noiseSeed = Random.Range(0f, 10f);
+        float bX = 0;
+        float bStartX = Mathf.PerlinNoise(noiseSeed + timer, 0);
+        b.position = new Vector3(bX, b.position.y, b.position.z);
+
         while (timer < 1f)
         {
+            // add noise to bPos
+            bX = Mathf.PerlinNoise(noiseSeed + (timer * noiseDeltaRate), 0) * noiseScale;
+            b.position = new Vector3((bStartX - (noiseScale / 2f)) + bX, b.position.y, b.position.z);
+
+
             Vector3 AbLerp = Vector3.Lerp(a.position, b.position, timer);
             Vector3 BcLerp = Vector3.Lerp(b.position, c.position, timer);
             Vector3 AbBcLerp = Vector3.Lerp(AbLerp, BcLerp, timer);
@@ -138,7 +168,7 @@ public class Snail_Controller : MonoBehaviour
         // X axis - moving right
         if (movement.x > 0)
         {
-            if (c.InverseTransformPoint(landingZoneTransformPoint.position).x < (-extents.x))
+            if (c.InverseTransformPoint(landingZone.position).x < (-extents.x))
             {
                 x = 0;
                 z = movement.x;
@@ -152,7 +182,7 @@ public class Snail_Controller : MonoBehaviour
         // X axis moving left
         else if (movement.x < 0)
         {
-            if (c.InverseTransformPoint(landingZoneTransformPoint.position).x > (extents.x))
+            if (c.InverseTransformPoint(landingZone.position).x > (extents.x))
             {
                 x = 0;
                 z = movement.x;
@@ -172,7 +202,7 @@ public class Snail_Controller : MonoBehaviour
         // Z axis - moving forward
         if (movement.y > 0)
         {
-            if (c.InverseTransformPoint(landingZoneTransformPoint.position).z < (-extents.z))
+            if (c.InverseTransformPoint(landingZone.position).z < (-extents.z))
             {
                 y = 0;
                 w = movement.y;
@@ -186,7 +216,7 @@ public class Snail_Controller : MonoBehaviour
         // Z axis moving back
         else if (movement.y < 0)
         {
-            if (c.InverseTransformPoint(landingZoneTransformPoint.position).z > (extents.z))
+            if (c.InverseTransformPoint(landingZone.position).z > (extents.z))
             {
                 y = 0;
                 w = movement.y;
@@ -235,29 +265,35 @@ public class Snail_Controller : MonoBehaviour
 
     void SetMoveState(MoveState newState)
     {
-        Debug.Log(newState);
+        moveState = newState;
         switch (newState)
         {
             case MoveState.Standard:
+                EnableTrails(false);
                 rigid.isKinematic = true;
-                moveState = newState;
                 break;
 
             case MoveState.BubbleRise:
+                EnableTrails(false);
                 rigid.isKinematic = true;
-                moveState = newState;
                 break;
 
             case MoveState.GravityJump:
+                EnableTrails(true);
                 rigid.isKinematic = false;
-                moveState = newState;
                 break;
 
             case MoveState.FloatDown:
+                EnableTrails(true);
                 rigid.isKinematic = true;
-                moveState = newState;
                 break;
         }
+    }
+
+    void EnableTrails(bool enabled)
+    {
+        lRend1.enabled = enabled;
+        lRend2.enabled = enabled;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -276,9 +312,12 @@ public class Snail_Controller : MonoBehaviour
             rigid.isKinematic = true;
             SetMoveState(MoveState.Standard);
         }
+        if(collision.transform.tag == "Rock" && moveState == MoveState.GravityJump)
+        {
+
+        }
         // Debug.Log(collision.transform.name);
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "LandingPad")
@@ -291,12 +330,31 @@ public class Snail_Controller : MonoBehaviour
     {
         if (onBubble)
         {
-            transform.localPosition = transform.parent.GetComponent<BubbleFlight>().snailSitSpot.position - transform.parent.position;
+            transform.position = transform.parent.GetComponent<BubbleFlight>().snailSitSpot.position;
         }
         else
         {
             Debug.Log("Snail Not on Bubble. Can't snap to bubble position");
         }
+
+    }
+    public float collisionDist;
+    bool CanMove(Vector3 translation)
+    {
+        if (Physics.Raycast(transform.position, translation, out RaycastHit hit, collisionDist, 1 << 9))
+        {
+            //if (hit.transform == "Obstacle")
+            //{
+            Debug.DrawLine(transform.position, hit.point);
+            Debug.Log(hit.transform.name);
+            return false;
+            //}
+        }
+        return true;
+    }
+
+    private void OnDrawGizmos()
+    {
 
     }
 
@@ -337,8 +395,16 @@ public class Snail_Controller : MonoBehaviour
     {
         if (_thirdPerson)
         {
-            camTrans.position = thirdPersonView.position;
-            camTrans.rotation = thirdPersonView.rotation;
+            if (placePlantMode)
+            {
+                camTrans.position = thirdPersonViewEdit.position;
+                camTrans.rotation = thirdPersonViewEdit.rotation;
+            }
+            else
+            {
+                camTrans.position = thirdPersonViewPlay.position;
+                camTrans.rotation = thirdPersonViewPlay.rotation;
+            }
         }
         else
         {
@@ -347,19 +413,56 @@ public class Snail_Controller : MonoBehaviour
         }
         thirdPersonState = _thirdPerson;
     }
-
+    public float heightError;
+    public Vector3 lastTranslation;
     void Move()
     {
-        float vert = Input.GetAxis("Vertical");
+        float forward = Input.GetAxis("Vertical");
         float hor = Input.GetAxis("Horizontal");
 
-        Vector3 translation = Strafe ? new Vector3(hor, 0, vert) : new Vector3(0, 0, vert);
+        Vector3 translation = Strafe ? new Vector3(hor, 0, forward) : new Vector3(0, 0, forward);
         Vector3 rotation = Strafe ? new Vector3() : new Vector3(0, hor, 0);
 
         if (moveState == MoveState.Standard)
-            transform.Translate(translation * Time.deltaTime * moveSpeed);
+        {
+
+            if (translation.sqrMagnitude != 0 && CanMove(transform.TransformDirection(translation)))
+            {
+                lastTranslation = translation * Time.deltaTime * moveSpeed;
+                transform.Translate(lastTranslation);
+            }
+            else
+            {
+                lastTranslation = translation;
+            }
+
+            AdjustHeight();
+
+        }
+
 
         transform.Rotate(rotation * Time.deltaTime * rotateSpeed);
+    }
+    bool adjusting;
+    void AdjustHeight()
+    {
+        Ray ray = new Ray(bodyBase.position + new Vector3(0, 2, 0), Vector3.down * 5);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 5f, 1 << 8))
+        {
+            Vector3 distVector = hit.point - bodyBase.position;
+            float distSqr = distVector.sqrMagnitude;
+            if (distSqr > (heightError * heightError))
+            {
+                adjusting = true;
+                transform.Translate(distVector * Time.deltaTime);
+                // print(distVector);
+            }
+            else
+            {
+                adjusting = false;
+            }
+        }
     }
 
     public void SetMoveSpeed(float _moveSpeed)
@@ -377,11 +480,11 @@ public class Snail_Controller : MonoBehaviour
         camSwitchLerpActive = true;
 
         float timer = 0;
-        Vector3 startPos = toThirdP ? firstPersonView.position : thirdPersonView.position;
-        Vector3 finishPos = toThirdP ? thirdPersonView.position : firstPersonView.position;
+        Vector3 startPos = toThirdP ? firstPersonView.position : thirdPersonViewPlay.position;
+        Vector3 finishPos = toThirdP ? thirdPersonViewPlay.position : firstPersonView.position;
 
-        Quaternion startRot = toThirdP ? firstPersonView.rotation : thirdPersonView.rotation;
-        Quaternion finishRot = toThirdP ? thirdPersonView.rotation : firstPersonView.rotation;
+        Quaternion startRot = toThirdP ? firstPersonView.rotation : thirdPersonViewPlay.rotation;
+        Quaternion finishRot = toThirdP ? thirdPersonViewPlay.rotation : firstPersonView.rotation;
 
         while (timer <= 1f)
         {
@@ -402,6 +505,7 @@ public class Snail_Controller : MonoBehaviour
 
     public void ResetPos()
     {
+        StopAllCoroutines();
         rotateSpeed = baseRotateSpeed;
         moveSpeed = baseMoveSpeed;
         transform.position = respawnPoint.position;

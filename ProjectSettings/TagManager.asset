@@ -13,6 +13,9 @@ TagManager:
   - UpButton
   - DownButton
   - Ground
+  - DestroyBubble
+  - RockParent
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -23,7 +26,7 @@ TagManager:
   - 
   - 
   - Ground
-  - 
+  - Rocks
   - 
   - 
   - 

@@ -23,9 +23,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7209912215499050135}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.484, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.00000003522098, y: 0.06600974, z: -0.000000050512472, w: 0.997819}
+  m_LocalPosition: {x: 0, y: 0.675, z: 0}
+  m_LocalScale: {x: 0.20000002, y: 0.2, z: 0.20000002}
   m_Children: []
   m_Father: {fileID: 8809977198374041569}
   m_RootOrder: 0
@@ -137,16 +137,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a342fc477e08de488297f1f8acdb00e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inCoral: 0
   popFX: {fileID: 6743062257310326675, guid: d6d2a21707081224892b8ec5e06ce09b, type: 3}
   snailSitSpot: {fileID: 0}
-  spiralling: 0
   applyNoise: 1
   applyMoreNoise: 1
+  beyondSnailRideRange: 0
   xZSpeed: 0.6
   ySpeed: 0.4
-  maxRadius: 1
-  radiusGrowthRate: 1
+  maxRadius: 2
+  radiusGrowthRate1: 0.5
+  radiusGrowthRate2: 0.1
 --- !u!54 &8188287313985476128
 Rigidbody:
   m_ObjectHideFlags: 0

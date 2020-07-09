@@ -14,7 +14,7 @@ public class UI_Manager : MonoBehaviour
 
     public Text moveText;
     public Text rotateText;
-    public Text bubbleSpeedText;
+    public Text bubbleSpiralSpeedText, bubbleJourneySpeedText;
     public Text bubbleIntervalText;
     public Text bubbleRiseSpeedText;
     public Image lerpCamButton, seeSoundZoneButton, seeVolAdjustButton;
@@ -205,7 +205,8 @@ public class UI_Manager : MonoBehaviour
         moveText.text = snail.moveSpeed.ToString();
         bubbleRiseSpeedText.text = bubbleSpawn.riseSpeed.ToString();
         rotateText.text = snail.rotateSpeed.ToString();
-        bubbleSpeedText.text = bubbleSpawn.bubbleSpiralSpeed.ToString();
+        bubbleSpiralSpeedText.text = bubbleSpawn.bubbleSpiralSpeed.ToString();
+        bubbleJourneySpeedText.text = snail.floatJourneySpeed.ToString();
         bubbleIntervalText.text = bubbleSpawn.spawnInterval.ToString();
         lerpCamButton.color = snail.camSwitchLerp ? new Color(Color.red.r, Color.red.g, Color.red.b, 0.5f) : new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);
         seeSoundZoneButton.color = showSoundZones ? new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f) : new Color(Color.red.r, Color.red.g, Color.red.b, 0.5f);
@@ -250,7 +251,14 @@ public class UI_Manager : MonoBehaviour
         SetDisplays();
     }
 
-    public void SetBubbleSpeed(float change)
+    public void SetBubbleJourneySpeed(float change)
+    {
+        // set speed for future bubbles to be spawned
+        snail.floatJourneySpeed += change;
+        SetDisplays();
+    }
+
+    public void SetBubbleSpiralSpeed(float change)
     {
         // set speed for future bubbles to be spawned
         bubbleSpawn.bubbleSpiralSpeed += change;
