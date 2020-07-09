@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 namespace DecalSystem {
     using System.Collections;
     using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace DecalSystem {
         }
 
 
-        [MenuItem( "GameObject/Decal" )]
+        //[MenuItem( "GameObject/Decal" )]
         internal static void Create() {
             new GameObject( "Decal", typeof( Decal ), typeof( MeshFilter ), typeof( MeshRenderer ) ).isStatic = true;
         }
@@ -41,7 +41,7 @@ namespace DecalSystem {
 
         public void OnValidate() {
             if (!Material) Sprite = null;
-            if (Sprite && Material.mainTexture != Sprite.texture) Sprite = null;
+            //if (Sprite && Material.mainTexture != Sprite.texture) Sprite = null;
 
             MaxAngle = Mathf.Clamp( MaxAngle, 1, 180 );
             Offset = Mathf.Clamp( Offset, 0.005f, 0.05f );
@@ -54,7 +54,7 @@ namespace DecalSystem {
         }
 
         void OnEnable() {
-            if (Application.isPlaying) enabled = false;
+            if (Application.isPlaying) enabled = true;
         }
 
         void Update() {
@@ -97,4 +97,4 @@ namespace DecalSystem {
 
     }
 }
-#endif
+//#endif

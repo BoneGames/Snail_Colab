@@ -1,4 +1,5 @@
-﻿using NaughtyAttributes;
+﻿//using DecalSystem;
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class Snail_Controller : MonoBehaviour
         FloatDown
     }
     public bool placePlantMode;
-
+    public Decal_Client decals;
     // Snail Movement
     public MoveState moveState;
     //[HideInInspector]
@@ -44,10 +45,16 @@ public class Snail_Controller : MonoBehaviour
     // Status
     bool bubbleRiding => transform.parent != null;
 
+
+
+
     // Debugging
     Collider col;
     public List<Vector3> colliderCorners => GetColliderCorners();
 
+    public float posTradeOff;
+
+    public float noiseScale, noiseDeltaRate;
 
     // Controls
     public KeyCode camSwitchKey, strafeKey1, strafeKey2, jump;
@@ -66,7 +73,7 @@ public class Snail_Controller : MonoBehaviour
     {
         lRend1.SetPositions(new Vector3[] { lRend1.transform.position, lRendEnd1.position });
         lRend2.SetPositions(new Vector3[] { lRend2.transform.position, lRendEnd2.position });
-        
+
     }
 
     void Start()
@@ -102,9 +109,6 @@ public class Snail_Controller : MonoBehaviour
         SwitchCamView();
     }
 
-    public float posTradeOff;
-
-    public float noiseScale, noiseDeltaRate;
     IEnumerator FloatDown()
     {
         SetMoveState(MoveState.FloatDown);
@@ -241,10 +245,13 @@ public class Snail_Controller : MonoBehaviour
     {
         UnparentSnail();
 
+        Vector3 jumpDir = (Vector3.forward + Vector3.up * 1.5f) * jumpForce;
+        SetMoveState(MoveState.GravityJump);
+        rigid.AddForce(jumpDir, ForceMode.Impulse);
         StartCoroutine(TemporaryGravity(false));
-        rigid.AddForce((Vector3.forward * 2 + Vector3.up) * jumpForce, ForceMode.Acceleration);
 
     }
+
 
     IEnumerator TemporaryGravity(bool toGround)
     {
@@ -253,8 +260,10 @@ public class Snail_Controller : MonoBehaviour
 
         if (!toGround)
         {
+            //Debug.LogError("pre while: " + rigid.velocity.y);
             while (rigid.velocity.y > 0)
             {
+                //Debug.LogError("while: " + rigid.velocity.y);
                 yield return null;
             }
 
@@ -312,7 +321,7 @@ public class Snail_Controller : MonoBehaviour
             rigid.isKinematic = true;
             SetMoveState(MoveState.Standard);
         }
-        if(collision.transform.tag == "Rock" && moveState == MoveState.GravityJump)
+        if (collision.transform.tag == "Rock" && moveState == MoveState.GravityJump)
         {
 
         }
@@ -353,17 +362,11 @@ public class Snail_Controller : MonoBehaviour
         return true;
     }
 
-    private void OnDrawGizmos()
-    {
-
-    }
-
     void UnparentSnail()
     {
         if (transform.parent != null)
         {
             transform.parent = null;
-            Debug.Log("unparented from bubble");
         }
         else
         {
@@ -430,6 +433,7 @@ public class Snail_Controller : MonoBehaviour
             {
                 lastTranslation = translation * Time.deltaTime * moveSpeed;
                 transform.Translate(lastTranslation);
+                decals.CreateTrail(bodyBase.position, transform.forward);
             }
             else
             {
@@ -443,7 +447,7 @@ public class Snail_Controller : MonoBehaviour
 
         transform.Rotate(rotation * Time.deltaTime * rotateSpeed);
     }
-    bool adjusting;
+
     void AdjustHeight()
     {
         Ray ray = new Ray(bodyBase.position + new Vector3(0, 2, 0), Vector3.down * 5);
@@ -454,13 +458,8 @@ public class Snail_Controller : MonoBehaviour
             float distSqr = distVector.sqrMagnitude;
             if (distSqr > (heightError * heightError))
             {
-                adjusting = true;
                 transform.Translate(distVector * Time.deltaTime);
                 // print(distVector);
-            }
-            else
-            {
-                adjusting = false;
             }
         }
     }

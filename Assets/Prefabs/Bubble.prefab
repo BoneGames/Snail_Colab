@@ -1,5 +1,62 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &311854258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 311854259}
+  - component: {fileID: 311854260}
+  - component: {fileID: 311854261}
+  m_Layer: 0
+  m_Name: DestroyCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &311854259
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311854258}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8809977198374041569}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &311854260
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311854258}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9, y: 0.3, z: 0.9}
+  m_Center: {x: 0, y: -0.05, z: 0}
+--- !u!114 &311854261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311854258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 070ded226d3009e49a486ea0349bf405, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7209912215499050135
 GameObject:
   m_ObjectHideFlags: 0
@@ -63,6 +120,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3318373944981413975}
+  - {fileID: 311854259}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -123,8 +181,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.694685, y: 0.6362725, z: 0.7186699}
-  m_Center: {x: -0.012785912, y: 0.115502864, z: -0.0071582794}
+  m_Size: {x: 0.5, y: 0.2, z: 0.5}
+  m_Center: {x: 0, y: 0.39, z: 0}
 --- !u!114 &1336330427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,8 +195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a342fc477e08de488297f1f8acdb00e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popFX: {fileID: 6743062257310326675, guid: d6d2a21707081224892b8ec5e06ce09b, type: 3}
   snailSitSpot: {fileID: 0}
+  popFX: {fileID: 6743062257310326675, guid: d6d2a21707081224892b8ec5e06ce09b, type: 3}
   applyNoise: 1
   applyMoreNoise: 1
   beyondSnailRideRange: 0

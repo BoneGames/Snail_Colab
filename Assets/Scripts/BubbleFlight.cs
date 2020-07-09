@@ -6,16 +6,13 @@ using NaughtyAttributes;
 public class BubbleFlight : MonoBehaviour
 {
 
-    public bool snailRider => transform.childCount > 1;
-
-
-    public GameObject popFX;
+    public bool snailRider => transform.childCount > startChildCount;
+    int startChildCount;
     Rigidbody rigid;
     Collider col;
     [HideInInspector]
     public Transform snailSitSpot;
-    // public Vector3 extents;
-
+    public GameObject popFX;
 
     // spiral flight
     // variables
@@ -35,13 +32,12 @@ public class BubbleFlight : MonoBehaviour
 
     private void Start()
     {
+        startChildCount = transform.childCount;
         col = GetComponent<Collider>();
         snailSitSpot = transform.GetChild(0);
         xNoiseSeed = Random.Range(0f, 1000f);
         zNoiseSeed = Random.Range(0f, 1000f);
         rigid = GetComponent<Rigidbody>();
-        GameObject _pop = Instantiate(popFX, transform.position + Vector3.up, Quaternion.identity);
-        _pop.name = "BubblePopFX";
         beyondSnailRideRange = false;
     }
 
@@ -61,16 +57,16 @@ public class BubbleFlight : MonoBehaviour
         SpiralUp();
     }
 
-    void DestroyBubble()
+    public void DestroyBubble()
     {
-        //// bubble pop FX
-        //GameObject _pop = Instantiate(popFX, transform.position, Quaternion.identity);
-        //_pop.name = "Death_POP";
-        //// remove snail
-        //if (snailRider)
-        //{
-        //    transform.GetComponentInChildren<Snail_Controller>().transform.parent = null;
-        //}
+        // bubble pop FX
+        GameObject _pop = Instantiate(popFX, transform.position, Quaternion.identity);
+        _pop.name = "Death_POP";
+        // remove snail
+        if (snailRider)
+        {
+            transform.GetComponentInChildren<Snail_Controller>().transform.parent = null;
+        }
         // destroy bubble
         Destroy(gameObject);
     }
@@ -123,8 +119,8 @@ public class BubbleFlight : MonoBehaviour
                 GetComponentInChildren<Snail_Controller>().JumpOffBubble();
             }
 
-            col.enabled = false;
-            Destroy(rigid);
+            //col.enabled = false;
+            //Destroy(rigid);
             beyondSnailRideRange = true;
         }
         else if (other.transform.tag == "DestroyBubble")
