@@ -211,7 +211,7 @@ public class UI_Manager : MonoBehaviour
         lerpCamButton.color = snail.camSwitchLerp ? new Color(Color.red.r, Color.red.g, Color.red.b, 0.5f) : new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f);
         seeSoundZoneButton.color = showSoundZones ? new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f) : new Color(Color.red.r, Color.red.g, Color.red.b, 0.5f);
         seeVolAdjustButton.color = allVolumesVisible ? new Color(Color.green.r, Color.green.g, Color.green.b, 0.5f) : new Color(Color.red.r, Color.red.g, Color.red.b, 0.5f);
-        ambientVolText.text = ambientVol.volume.ToString();
+        //ambientVolText.text = ambientVol.volume.ToString();
 
     }
 
