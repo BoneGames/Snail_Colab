@@ -43,21 +43,42 @@ public class Decal_Client : MonoBehaviour
     public GameObject[] trailDecals;
     public List<DecalInfo> placedDecals = new List<DecalInfo>();
     DecalInfo lastDecal => placedDecals[placedDecals.Count - 1];
-    public string serverIP;
+    public string serverDest;
     fsSerializer serializer;
 
     private void Start()
     {
         decalCol = decalMaterial.color;
-        StartCoroutine(GetRequest(serverIP));
+         StartCoroutine(GetRequest(serverDest));
+        //StartCoroutine(www());
+        //GetRequest(serverDest);
         serializer = new fsSerializer();
         
     }
+    //UnityWebRequest web
+    //void GetRequest(string serverDest)
+    //{
+    //    UnityWebRequest webRequest = UnityWebRequest.Get(serverDest);
+    //    webRequest.SendWebRequest();
+    //}
 
-    IEnumerator GetRequest(string uri)
+    //IEnumerator www()
+    //{
+    //    using (WWW www = new WWW(serverDest))
+    //    {
+    //        yield return www;
+    //        Debug.LogError(www.error);
+
+    //    }
+    //}
+
+    IEnumerator GetRequest(string serverDest)
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        UnityWebRequest.ClearCookieCache();
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(serverDest))
         {
+            //webRequest.chunkedTransfer = false;
+            //webRequest.useHttpContinue = false;
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
 
@@ -127,7 +148,7 @@ public class Decal_Client : MonoBehaviour
         Debug.Log("Pre Send Json:");
         Debug.Log(json);
 
-        using (UnityWebRequest www = UnityWebRequest.Put(serverIP, json))
+        using (UnityWebRequest www = UnityWebRequest.Put(serverDest, json))
         {
             www.method = UnityWebRequest.kHttpVerbPOST;
             www.SetRequestHeader("Content-Type", "application/json");

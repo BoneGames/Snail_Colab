@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.42389268, g: 0.4552204, b: 0.47887486, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -8507,7 +8507,7 @@ MonoBehaviour:
   - {fileID: 445288604391108022, guid: 253b4fa785a170448827e131854d4ff9, type: 3}
   - {fileID: 445288604391108022, guid: fb84a7358ff440f45b6ac850b3f0b5a6, type: 3}
   placedDecals: []
-  serverIP: http://localhost/
+  serverDest: http://110.174.177.174:80
   trailDuration: 24
   decalMaterial: {fileID: 2100000, guid: 56effbbf059f2464088b1e48b835162b, type: 2}
 --- !u!4 &710763820
