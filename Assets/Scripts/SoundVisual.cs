@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class SoundVisual : MonoBehaviour
 {
+    public bool active;
     public bool randomStartTime;
     public Color zoneCol;
     public AudioSource aS;
@@ -123,6 +124,8 @@ public class SoundVisual : MonoBehaviour
 
     private void Update()
     {
+        if (!active)
+            return;
         if (!snailInside)
             return;
 

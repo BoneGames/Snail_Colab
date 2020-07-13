@@ -107,7 +107,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8809977198374041569
 Transform:
   m_ObjectHideFlags: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
   applyMoreNoise: 1
   beyondSnailRideRange: 0
   xZSpeed: 0.6
-  ySpeed: 0.4
+  ySpeed: 2
   maxRadius: 2
   radiusGrowthRate1: 0.5
   radiusGrowthRate2: 0.1
@@ -220,4 +220,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0

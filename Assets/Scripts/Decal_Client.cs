@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using FullSerializer;
-
 
 [Serializable]
 public struct DecalInfo
@@ -39,52 +37,49 @@ public struct Packet
 
 public class Decal_Client : MonoBehaviour
 {
+    public bool loadDecals;
     public float decalInterval;
     public GameObject[] trailDecals;
     public List<DecalInfo> placedDecals = new List<DecalInfo>();
     DecalInfo lastDecal => placedDecals[placedDecals.Count - 1];
     public string serverDest;
     fsSerializer serializer;
+    public Camera cam;
+
+    public bool debug;
+
+    private void Awake()
+    {
+        //cam.cullingMask = 0;
+    }
 
     private void Start()
     {
         decalCol = decalMaterial.color;
-         StartCoroutine(GetRequest(serverDest));
-        //StartCoroutine(www());
-        //GetRequest(serverDest);
-        serializer = new fsSerializer();
-        
+        if (loadDecals)
+        {
+            StartCoroutine(GetRequest(serverDest));
+            serializer = new fsSerializer();
+        }
     }
-    //UnityWebRequest web
-    //void GetRequest(string serverDest)
-    //{
-    //    UnityWebRequest webRequest = UnityWebRequest.Get(serverDest);
-    //    webRequest.SendWebRequest();
-    //}
 
-    //IEnumerator www()
-    //{
-    //    using (WWW www = new WWW(serverDest))
-    //    {
-    //        yield return www;
-    //        Debug.LogError(www.error);
-
-    //    }
-    //}
 
     IEnumerator GetRequest(string serverDest)
     {
         UnityWebRequest.ClearCookieCache();
         using (UnityWebRequest webRequest = UnityWebRequest.Get(serverDest))
         {
-            //webRequest.chunkedTransfer = false;
-            //webRequest.useHttpContinue = false;
+            webRequest.SetRequestHeader("Access-Control-Allow-Credentials", "true");
+            webRequest.SetRequestHeader("Access-Control-Allow-Headers", "Accept, Content-Type, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
+            webRequest.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+            webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
 
             if (webRequest.isNetworkError)
             {
-                Debug.LogError("Network Failed To Connect: " + webRequest.error);
+                if (debug)
+                    Debug.LogError("Network Failed To Connect: " + webRequest.error);
             }
             else
             {
@@ -92,10 +87,6 @@ public class Decal_Client : MonoBehaviour
             }
         }
     }
-
-    /* public fsResult TrySerialize(Type storageType, object instance, out fsData data)
-     {
-         return TrySerialize(storageType, null, instance, out data);*/
 
     Packet[] Deserialize(string jsonPacketStrings)
     {
@@ -112,7 +103,16 @@ public class Decal_Client : MonoBehaviour
 
         foreach (var str in deserialized)
         {
-            packetList.Add(JsonUtility.FromJson<Packet>(str));
+            try
+            {
+                packetList.Add(JsonUtility.FromJson<Packet>(str));
+
+            }
+            catch
+            {
+                Debug.LogError("Can't deserialise this jsoninto Packet:");
+                Debug.Log(str);
+            }
         }
 
         return packetList.ToArray();
@@ -120,33 +120,24 @@ public class Decal_Client : MonoBehaviour
 
     public void SubmitTrailData()
     {
-        StartCoroutine(Upload());
+        if (loadDecals)
+        {
+            StartCoroutine(Upload());
+        }
+        else
+        {
+            Debug.Log("Networked decals are curently disabled. Enable 'Load Decals' to re-enable (but can you handle all that server sheeeeeeet..?)");
+        }
     }
-    float deltaTime;
-    string onPost = "untried";
-    //void OnGUI()
-    //{
-    //    deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-    //    int w = Screen.width, h = Screen.height;
-
-    //    GUIStyle style = new GUIStyle();
-
-    //    Rect rect = new Rect(0, 0, w, h * 2 / 100);
-    //    style.alignment = TextAnchor.UpperCenter;
-    //    style.fontSize = h * 5 / 100;
-    //    style.normal.textColor = Color.red;
-
-
-
-    //    GUI.Label(rect, onPost, style);
-    //}
 
     IEnumerator Upload()
     {
-        onPost = "Uploading Decal Data...";
         string json = DecalDataToJson();
-        Debug.Log("Pre Send Json:");
-        Debug.Log(json);
+        if (debug)
+        {
+            Debug.Log("Pre Send Json:");
+            Debug.Log(json);
+        }
 
         using (UnityWebRequest www = UnityWebRequest.Put(serverDest, json))
         {
@@ -159,13 +150,13 @@ public class Decal_Client : MonoBehaviour
 
             if (www.isNetworkError || www.isHttpError)
             {
-                Debug.Log(www.error);
-                onPost = www.error;
+                if (debug)
+                    Debug.Log(www.error);
             }
             else
             {
-                Debug.Log("Decal Upload complete!");
-                onPost = "Decal Upload complete!";
+                if (debug)
+                    Debug.Log("Decal Upload complete!");
             }
         }
     }
@@ -176,13 +167,19 @@ public class Decal_Client : MonoBehaviour
         if (serverData.Length > 2)
         {
             string json = Encoding.UTF8.GetString(serverData);
-            Debug.Log("Json decoded from server byte[]:");
-            Debug.Log(json);
+            if (debug)
+            {
+                Debug.Log("Json decoded from server byte[]:");
+                Debug.Log(json);
+            }
             // Packet[] packet = JsonUtility.FromJson<Packet[]>(@json);
             Packet[] packetArray = Deserialize(json);
-            Debug.Log("<>");
-            Debug.Log("Packet[] after decoding from Json:");
-            Debug.Log(packetArray);
+            if (debug)
+            {
+                Debug.Log("<>");
+                Debug.Log("Packet[] after decoding from Json:");
+                Debug.Log(packetArray);
+            }
             return packetArray;
         }
         else
@@ -200,8 +197,11 @@ public class Decal_Client : MonoBehaviour
     {
         if (decalPackets[0].decalInfo == null)
         {
-            Debug.Log("No Data Received from server");
-            Debug.Log("You are the first player or something fucked up...");
+            if (debug)
+            {
+                Debug.Log("No Data Received from server");
+                Debug.Log("You are the first player or something fucked up...");
+            }
         }
         else
         {
@@ -217,6 +217,7 @@ public class Decal_Client : MonoBehaviour
                 }
             }
         }
+        //cam.cullingMask = -1;
     }
 
     public float trailDuration;
@@ -224,11 +225,21 @@ public class Decal_Client : MonoBehaviour
     float GetTimeToAlphaRation(string timeStamp)
     {
         DateTime timeCreated = DateTime.Parse(timeStamp);
+        // Debug.LogError("Time Created: " + timeCreated);
         DateTime currentTime = DateTime.Now;
-        TimeSpan interval = currentTime - timeCreated;
+        // Debug.LogError("Current Time: " + currentTime);
+        TimeSpan interval = currentTime.Subtract(timeCreated);
         float hoursPassed = (float)interval.TotalHours;
         float alpha = Mathf.Clamp((-(1f / trailDuration) * hoursPassed + 1f), 0, 1);
-        Debug.Log("Set Decal Alpha to " + alpha + ", based on " + hoursPassed + " since being laid down");
+
+        if (alpha != 0)
+        {
+            int alphaLength = alpha.ToString().Length;
+            alpha = alphaLength < 4 ? float.Parse(alpha.ToString().Substring(0, alphaLength)) : float.Parse(alpha.ToString().Substring(0, 4));
+        }
+
+        //if (debug)
+        // Debug.Log("Set Decal Alpha to " + alpha + ", based on " + hoursPassed + " since being laid down");
         return alpha;
     }
 
@@ -242,7 +253,7 @@ public class Decal_Client : MonoBehaviour
                 return;
             }
         }
-        int index = UnityEngine.Random.Range(0, trailDecals.Length - 1);
+        int index = UnityEngine.Random.Range(0, trailDecals.Length);
         Quaternion rot = Quaternion.LookRotation(Vector3.up, snailForward);
         PlaceDecal(index, trailPos, rot, 1, true);
     }
@@ -252,9 +263,22 @@ public class Decal_Client : MonoBehaviour
 
     public void PlaceDecal(int prefabIndex, Vector3 position, Quaternion rot, float alpha, bool live = false)
     {
-        GameObject _trailPiece = Instantiate(trailDecals[prefabIndex], position, rot);
+        GameObject _trailPiece = Instantiate(trailDecals[prefabIndex], position, rot, transform);
 
-        _trailPiece.GetComponent<Renderer>().material.color = new Vector4(decalCol.r, decalCol.g, decalCol.b, alpha);
+        ////_trailPiece.GetComponent<Renderer>().material.color = new Color(decalCol.r, decalCol.g, decalCol.b, alpha);
+        //Material matInstance = Instantiate(decalMaterial);
+
+        //foreach (var item in matInstance.GetTexturePropertyNames())
+        //{
+        //    Debug.LogError(item);
+        //}
+        //matInstance.SetColor("_MainTex", new Color(decalCol.r, decalCol.g, decalCol.b, alpha));
+
+        ////Debug.LogError("Props: " +matInstance.GetTexturePropertyNames());
+
+        //_trailPiece.GetComponent<Renderer>().material.SetColor("_BaseColor", new Color(decalCol.r, decalCol.g, decalCol.b, alpha));
+
+
 
         if (live)
             placedDecals.Add(new DecalInfo(prefabIndex, position, rot));

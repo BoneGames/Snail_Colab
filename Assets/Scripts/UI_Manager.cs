@@ -25,25 +25,48 @@ public class UI_Manager : MonoBehaviour
     public bool showSoundZones;
     public SoundVisual[] allSoundscapes;
     public List<SoundVisual> activeSoundscapes = new List<SoundVisual>();
-
+    public bool disableSoundVisuals;
     public AudioSource ambientVol;
 
     public VerticalLayoutGroup volLayout;
 
-
     void Start()
     {
-        allVolumesVisible = false;
-        //showSoundZones = true;
-        allSoundscapes = FindObjectsOfType<SoundVisual>();
         snail = FindObjectOfType<Snail_Controller>();
-        ShowColorSoundZones();
         //SetDisplays();
+        SoundZones();
+    }
+
+    void SoundZones()
+    {
+        allSoundscapes = FindObjectsOfType<SoundVisual>();
+        allVolumesVisible = false;
+        if(disableSoundVisuals)
+        {
+            foreach (var item in allSoundscapes)
+            {
+                item.active = false;
+            }
+        }
+        ShowColorSoundZones();
+
+    }
+    public bool devBuild;
+    private void Update()
+    {
+        if (devBuild)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                GameObject _switch = transform.GetChild(0).gameObject;
+                _switch.SetActive(!_switch.activeInHierarchy);
+            }
+        }
     }
 
     public void SeeAllSoundScapeVolumes()
     {
-        if(allVolumesVisible)
+        if (allVolumesVisible)
         {
             volLayout.childForceExpandHeight = false;
             volLayout.childControlHeight = false;
@@ -60,7 +83,7 @@ public class UI_Manager : MonoBehaviour
         {
             foreach (var item in allSoundscapes)
             {
-                if(Vector3.Distance(item.transform.position, snail.transform.position) > item.aS.maxDistance)
+                if (Vector3.Distance(item.transform.position, snail.transform.position) > item.aS.maxDistance)
                 {
                     RemoveActiveSS(item);
                 }

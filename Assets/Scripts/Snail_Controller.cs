@@ -33,7 +33,7 @@ public class Snail_Controller : MonoBehaviour
     // Cam View
     [HideInInspector]
     public Transform firstPersonView, thirdPersonViewPlay, thirdPersonViewEdit, camTrans, bodyBase;
-
+    Snail_Anim_Controller anim_Contoller;
     public float camSwitchSpeed, jumpForce;
     // state tracker (1st or third person)
     public bool thirdPersonState;
@@ -41,11 +41,6 @@ public class Snail_Controller : MonoBehaviour
     public bool camSwitchLerp;
     // is lerp active?
     public bool camSwitchLerpActive;
-
-    // Status
-    bool bubbleRiding => transform.parent != null;
-
-
 
 
     // Debugging
@@ -60,31 +55,19 @@ public class Snail_Controller : MonoBehaviour
     public KeyCode camSwitchKey, strafeKey1, strafeKey2, jump;
     bool Strafe => Input.GetKey(strafeKey2) || Input.GetKey(strafeKey1);
 
+    public bool useStrafe;
+
     private void Awake()
     {
         // get components
         col = GetComponent<Collider>();
+        anim_Contoller = GetComponentInChildren<Snail_Anim_Controller>();
         rigid = GetComponent<Rigidbody>();
         camTrans = Camera.main.transform;
-    }
-    public Transform lRendEnd1, lRendEnd2;
-    [Button]
-    void LineRend()
-    {
-        lRend1.SetPositions(new Vector3[] { lRend1.transform.position, lRendEnd1.position });
-        lRend2.SetPositions(new Vector3[] { lRend2.transform.position, lRendEnd2.position });
-
     }
 
     void Start()
     {
-
-#if !UNITY_EDITOR
-        baseRotateSpeed = 20f;
-        moveSpeed = 0.4f;
-        placePlantMode = false;
-#endif
-
         // init positions
         ResetPos();
         SetCamPos(true);
@@ -103,11 +86,19 @@ public class Snail_Controller : MonoBehaviour
         if (moveState == MoveState.FloatDown)
             ShiftFloatDown();
 
-
         Move();
 
         SwitchCamView();
+
+        if (moving != movingLastFrame)
+        {
+            anim_Contoller.IdleOrMoving(moving);
+        }
+
+        movingLastFrame = moving;
     }
+
+    bool movingLastFrame;
 
     IEnumerator FloatDown()
     {
@@ -280,21 +271,25 @@ public class Snail_Controller : MonoBehaviour
             case MoveState.Standard:
                 EnableTrails(false);
                 rigid.isKinematic = true;
+                anim_Contoller.IdleOrMoving(moving);
                 break;
 
             case MoveState.BubbleRise:
                 EnableTrails(false);
                 rigid.isKinematic = true;
+                anim_Contoller.PrepareNextAnimState(Snail_Anim_Controller.AnimState.Idle);
                 break;
 
             case MoveState.GravityJump:
                 EnableTrails(true);
                 rigid.isKinematic = false;
+                anim_Contoller.PrepareNextAnimState(Snail_Anim_Controller.AnimState.Fly);
                 break;
 
             case MoveState.FloatDown:
                 EnableTrails(true);
                 rigid.isKinematic = true;
+                anim_Contoller.PrepareNextAnimState(Snail_Anim_Controller.AnimState.Fly);
                 break;
         }
     }
@@ -348,9 +343,10 @@ public class Snail_Controller : MonoBehaviour
 
     }
     public float collisionDist;
+    public Transform collisionRaycastOrigin;
     bool CanMove(Vector3 translation)
     {
-        if (Physics.Raycast(transform.position, translation, out RaycastHit hit, collisionDist, 1 << 9))
+        if (Physics.Raycast(collisionRaycastOrigin.position, translation, out RaycastHit hit, collisionDist, 1 << 9))
         {
             //if (hit.transform == "Obstacle")
             //{
@@ -418,18 +414,33 @@ public class Snail_Controller : MonoBehaviour
     }
     public float heightError;
     public Vector3 lastTranslation;
+    public bool moving;
+    //public bool turning;
     void Move()
     {
         float forward = Input.GetAxis("Vertical");
         float hor = Input.GetAxis("Horizontal");
 
-        Vector3 translation = Strafe ? new Vector3(hor, 0, forward) : new Vector3(0, 0, forward);
-        Vector3 rotation = Strafe ? new Vector3() : new Vector3(0, hor, 0);
+        Vector3 translation = new Vector3(); ;
+        Vector3 rotation = new Vector3();
+
+        if (useStrafe)
+        {
+            translation = Strafe ? new Vector3(hor, 0, forward) : new Vector3(0, 0, forward);
+            rotation = Strafe ? new Vector3() : new Vector3(0, hor, 0);
+        }
+        else
+        {
+            translation = new Vector3(0, 0, forward);
+            rotation = new Vector3(0, hor, 0);
+        }
+
+
+        bool movement = translation.sqrMagnitude != 0;
 
         if (moveState == MoveState.Standard)
         {
-
-            if (translation.sqrMagnitude != 0 && CanMove(transform.TransformDirection(translation)))
+            if (movement && CanMove(transform.TransformDirection(translation)))
             {
                 lastTranslation = translation * Time.deltaTime * moveSpeed;
                 transform.Translate(lastTranslation);
@@ -444,8 +455,12 @@ public class Snail_Controller : MonoBehaviour
 
         }
 
+        bool turning = rotation.sqrMagnitude != 0;
 
-        transform.Rotate(rotation * Time.deltaTime * rotateSpeed);
+        if (turning)
+            transform.Rotate(rotation * Time.deltaTime * rotateSpeed);
+
+        moving = movement;
     }
 
     void AdjustHeight()

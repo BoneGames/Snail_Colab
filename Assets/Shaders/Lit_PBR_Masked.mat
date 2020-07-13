@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Lit_PBR_Masked
+  m_Shader: {fileID: -6465566751694194690, guid: 1ab0de951ffeae44e94cc69ed74ca80f,
+    type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - Texture2D_2CB03DDF:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_4EA268A4:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_92F913DE:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_A0E199B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_A4ADF3B3:
+        m_Texture: {fileID: 2800000, guid: d226a9778709e6a4fa88769a15475ae6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_F03CF47B:
+        m_Texture: {fileID: 2800000, guid: 4bc36784aa62af94bb56bbb7a7b8d9fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - Boolean_C959562B: 0
+    - Boolean_D301FB36: 0
+    - Vector1_390DDB76: 0
+    - Vector1_95F9607: 0
+    - Vector1_C5194500: 0
+    - Vector1_EC451821: -0.53
+    - Vector1_F258B656: -0.78
+    m_Colors:
+    - Color_2EB7B695: {r: 1, g: 1, b: 1, a: 1}
+    - Color_32F8D79E: {r: 1, g: 1, b: 1, a: 1}
+    - Color_E08A6A3: {r: 0.7264151, g: 0.30495727, b: 0.30495727, a: 0}
+    - Vector2_3959960: {r: 1, g: 1, b: 0, a: 0}
+    - Vector2_D89E02A1: {r: 0, g: 0, b: 0, a: 0}

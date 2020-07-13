@@ -21,12 +21,36 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_2CB03DDF:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_4EA268A4:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_92F913DE:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_A0E199B:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_A4ADF3B3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_F03CF47B:
+        m_Texture: {fileID: 2800000, guid: e189d191135384f43a0babaf97e31f28, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _AlphaTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: ca15989115c30ce42b00926235c85c4b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 50c3cdb6a83b18b43bfd4a2a997f8f2b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -50,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ca15989115c30ce42b00926235c85c4b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 50c3cdb6a83b18b43bfd4a2a997f8f2b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -70,7 +94,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Boolean_C959562B: 0
+    - Boolean_D301FB36: 0
     - PixelSnap: 0
+    - Vector1_390DDB76: 0
+    - Vector1_95F9607: 0
+    - Vector1_C5194500: 0
+    - Vector1_EC451821: 0
+    - Vector1_F258B656: 0
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendOp: 0
@@ -119,10 +150,15 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - Color_2EB7B695: {r: 0, g: 0, b: 0, a: 0}
+    - Color_32F8D79E: {r: 0, g: 0, b: 0, a: 0}
+    - Color_E08A6A3: {r: 0, g: 0, b: 0, a: 0}
+    - Vector2_3959960: {r: 0, g: 0, b: 0, a: 0}
+    - Vector2_D89E02A1: {r: 0, g: 0, b: 0, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 0.39607844}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0.01517444, g: 0.2924528, b: 0.03250434, a: 1}
+    - _EmissionColor: {r: 0.18076174, g: 0.5452007, b: 0.5568628, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
