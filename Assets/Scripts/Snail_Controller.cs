@@ -31,7 +31,7 @@ public class Snail_Controller : MonoBehaviour
     public Vector3 extents;
     public TrailRenderer lRend1, lRend2;
     // Cam View
-    [HideInInspector]
+    //[HideInInspector]
     public Transform firstPersonView, thirdPersonViewPlay, thirdPersonViewEdit, camTrans, bodyBase;
     Snail_Anim_Controller anim_Contoller;
     public float camSwitchSpeed, jumpForce;
@@ -124,7 +124,7 @@ public class Snail_Controller : MonoBehaviour
             Vector3 BcLerp = Vector3.Lerp(b.position, c.position, timer);
             Vector3 AbBcLerp = Vector3.Lerp(AbLerp, BcLerp, timer);
 
-            transform.position = Vector3.Lerp(AbBcLerp, transform.position, posTradeOff);
+            transform.position = Vector3.Lerp(AbBcLerp, transform.position, timer);
 
             timer += Time.deltaTime * floatJourneySpeed * 0.25f;
 
@@ -302,9 +302,8 @@ public class Snail_Controller : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Bubble")
+        if (collision.transform.tag == "Bubble" && moveState != MoveState.FloatDown)
         {
-
             Transform sT = collision.transform;
             transform.parent = sT;
             SetMoveState(MoveState.BubbleRise);
@@ -351,7 +350,7 @@ public class Snail_Controller : MonoBehaviour
             //if (hit.transform == "Obstacle")
             //{
             Debug.DrawLine(transform.position, hit.point);
-            Debug.Log(hit.transform.name);
+            // Debug.Log(hit.transform.name);
             return false;
             //}
         }

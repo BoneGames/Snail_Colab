@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 445288604391108022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 12.428, y: 1.7, z: 9.81}
-  m_LocalScale: {x: 0.2, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: 46cc71344af4f4b4a85ecb3bc8c7efa4, type: 2}
-  Sprite: {fileID: 21300000, guid: 3263f1401bf5245498d827279e134d16, type: 3}
+  Sprite: {fileID: 21300000, guid: 0fe058c6ef7719f43bf0ab82653c98a3, type: 3}
   LayerMask:
     serializedVersion: 2
     m_Bits: 256

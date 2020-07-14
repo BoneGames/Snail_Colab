@@ -254,6 +254,7 @@ public class Decal_Client : MonoBehaviour
             }
         }
         int index = UnityEngine.Random.Range(0, trailDecals.Length);
+        snailForward *= UnityEngine.Random.Range(0, 2) != 1 ? 1 : -1;
         Quaternion rot = Quaternion.LookRotation(Vector3.up, snailForward);
         PlaceDecal(index, trailPos, rot, 1, true);
     }
